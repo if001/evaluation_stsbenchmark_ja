@@ -14,6 +14,8 @@ import sys
 import torch
 import os
 
+from stsb_multi_mt_ja import StsbMultiMt
+
 #Limit torch to 4 threads
 torch.set_num_threads(4)
 
@@ -40,7 +42,8 @@ models = [
 if len(sys.argv) > 1:
     models = sys.argv[1:]
 
-ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
+# ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
+ds = StsbMultiMt('stsb_multi_mt_ja', 'ja', split='test')
 
 sentences1 = ds['sentence1']
 sentences2 = ds['sentence2']
