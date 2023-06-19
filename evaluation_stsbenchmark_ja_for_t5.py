@@ -9,6 +9,8 @@ python evaluation_stsbenchmark_ja.py model_name
 from sentence_transformers import SentenceTransformer, LoggingHandler
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator, SimilarityFunction
 from transformers import T5Tokenizer, T5Model
+from transformers import MLukeTokenizer, LukeModel
+
 
 from datasets import load_dataset
 import logging
@@ -17,7 +19,38 @@ import torch
 import os
 
 
+class SentenceLukeJapanese:
+    def __init__(self, model_name_or_path, device=None):
+        self.tokenizer = MLukeTokenizer.from_pretrained(model_name_or_path)
+        self.model = LukeModel.from_pretrained(model_name_or_path)
+        self.model.eval()
 
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(device)
+        self.model.to(device)
+
+    def _mean_pooling(self, model_output, attention_mask):
+        token_embeddings = model_output[0] #First element of model_output contains all token embeddings
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+
+
+    def encode(self, sentences, batch_size=8):
+        all_embeddings = []
+        iterator = range(0, len(sentences), batch_size)
+        for batch_idx in iterator:
+            batch = sentences[batch_idx:batch_idx + batch_size]
+
+            encoded_input = self.tokenizer.batch_encode_plus(batch, padding="max_length", max_length=128,
+                                           truncation=True, return_tensors="pt").to(self.device)
+            model_output = self.model(**encoded_input)
+            sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
+
+            all_embeddings.extend(sentence_embeddings)
+
+        return torch.stack(all_embeddings)
+    
 class SentenceT5:
     def __init__(self, model_name_or_path, device=None):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
@@ -63,31 +96,9 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     handlers=[LoggingHandler()])
 #### /print debug information to stdout
 
-models = [
-    'sentence-transformers/LaBSE',
-    'xlm-roberta-base',
-    'xlm-roberta-large',
-    'sentence-transformers/quora-distilbert-multilingual',
-    'sentence-transformers/distilbert-multilingual-nli-stsb-quora-ranking',
-    'sentence-transformers/distiluse-base-multilingual-cased-v2',
-    'sentence-transformers/paraphrase-multilingual-mpnet-base-v2',
-    'sentence-transformers/paraphrase-xlm-r-multilingual-v1',
-    'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2',
-    'sentence-transformers/stsb-xlm-r-multilingual',
-]
-
-models = [
-    "rinna/japanese-gpt-neox-3.6b-instruction-sft",
-    "sonoisa/sentence-bert-base-ja-mean-tokens-v2",
-    "cl-tohoku/bert-base-japanese-v3"    
-    "sentence-transformers/distiluse-base-multilingual-cased-v2",
-
-    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    'xlm-roberta-base',
-]
-
+# model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
 model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, device='cuda')
+t5_model = SentenceT5(model_name, device='cpu')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
