@@ -84,12 +84,8 @@ models = [
     'xlm-roberta-base',
 ]
 
-MODEL_NAME = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(MODEL_NAME)
-    
-
-if len(sys.argv) > 1:
-    models = sys.argv[1:]
+model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
+t5_model = SentenceT5(model_name)
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
@@ -101,13 +97,12 @@ print(sentences1[:3], sentences2[:3])
 
 results = []
 
-for model_name in models:
-    print(model_name)
-    # model = SentenceTransformer(model_name, device="cuda")
-    model = SentenceTransformer(modules=t5_model, device="cuda")
-    evaluator = EmbeddingSimilarityEvaluator(sentences1, sentences2, scores, main_similarity=SimilarityFunction.COSINE, name='sts-test')
-    spearman_cos = model.evaluate(evaluator)
-    results.append('| {:s} | {:.1f} |'.format(model_name, spearman_cos * 100))
+print(model_name)
+# model = SentenceTransformer(model_name, device="cuda")
+model = SentenceTransformer(modules=t5_model, device="cuda")
+evaluator = EmbeddingSimilarityEvaluator(sentences1, sentences2, scores, main_similarity=SimilarityFunction.COSINE, name='sts-test')
+spearman_cos = model.evaluate(evaluator)
+results.append('| {:s} | {:.1f} |'.format(model_name, spearman_cos * 100))
 
 print('| model | spearman_cos |')
 print('|-------|-------------:|')
