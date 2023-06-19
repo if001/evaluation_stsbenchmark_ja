@@ -101,7 +101,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 # model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
 model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, device='cpu')
+t5_model = SentenceT5(model_name, 'cpu')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
