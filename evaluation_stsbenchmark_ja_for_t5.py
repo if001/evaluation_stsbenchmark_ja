@@ -99,7 +99,7 @@ results = []
 
 print(model_name)
 # model = SentenceTransformer(model_name, device="cuda")
-model = SentenceTransformer(modules=t5_model, device="cuda")
+model = SentenceTransformer(modules=[t5_model], device="cuda")
 evaluator = EmbeddingSimilarityEvaluator(sentences1, sentences2, scores, main_similarity=SimilarityFunction.COSINE, name='sts-test')
 spearman_cos = model.evaluate(evaluator)
 results.append('| {:s} | {:.1f} |'.format(model_name, spearman_cos * 100))
