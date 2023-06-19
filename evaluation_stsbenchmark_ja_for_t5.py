@@ -25,7 +25,7 @@ class SentenceT5:
         #self.model.eval()
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
-        # self.device = torch.device(device)
+        self.device = torch.device(device)
         # self.model.to(device)
 
     def _mean_pooling(self, model_output, attention_mask):
