@@ -75,8 +75,7 @@ class SentenceT5:
         for batch_idx in iterator:
             batch = sentences[batch_idx:batch_idx + batch_size]
             encoded_input = self.tokenizer.batch_encode_plus(batch, padding="longest", 
-                                           truncation=True, return_tensors="pt").to(self.device)
-            print('encoded_input', encoded_input)
+                                           truncation=True, return_tensors="pt").to(self.device)            
             model_output = self.model(**encoded_input)
             sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
 
@@ -99,12 +98,12 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 #### /print debug information to stdout
 
 # model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
-model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, 'cpu')
+# model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
+# t5_model = SentenceT5(model_name, 'cuda')
 
 
-# model_name = "sonoisa/sentence-luke-japanese-base-lite"
-# luke_model = SentenceLukeJapanese(model_name, 'cuda')
+model_name = "sonoisa/sentence-luke-japanese-base-lite"
+luke_model = SentenceLukeJapanese(model_name, 'cuda')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
