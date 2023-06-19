@@ -36,7 +36,7 @@ class SentenceLukeJapanese:
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 
-    def encode(self, sentences, batch_size=8):
+    def encode(self, sentences, batch_size=8, show_progress_bar=False, convert_to_numpy=True):
         all_embeddings = []
         iterator = range(0, len(sentences), batch_size)
         for batch_idx in iterator:
@@ -44,6 +44,7 @@ class SentenceLukeJapanese:
 
             encoded_input = self.tokenizer.batch_encode_plus(batch, padding="max_length", max_length=128,
                                            truncation=True, return_tensors="pt").to(self.device)
+            print('encoded_input', encoded_input.shape)
             model_output = self.model(**encoded_input)
             sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
 
