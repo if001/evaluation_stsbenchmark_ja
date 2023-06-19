@@ -35,7 +35,7 @@ class SentenceT5:
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 
-    def encode(self, sentences, batch_size=8):
+    def encode(self, sentences, batch_size=8, show_progress_bar=False, convert_to_numpy=True):
         all_embeddings = []
         iterator = range(0, len(sentences), batch_size)
         for batch_idx in iterator:
@@ -48,7 +48,10 @@ class SentenceT5:
 
             all_embeddings.extend(sentence_embeddings)
 
-        return torch.stack(all_embeddings)
+        result = torch.stack(all_embeddings)
+        if convert_to_numpy:
+            result = result.to('cpu').detach().numpy().copy()
+        return result
     
 
 #Limit torch to 4 threads
