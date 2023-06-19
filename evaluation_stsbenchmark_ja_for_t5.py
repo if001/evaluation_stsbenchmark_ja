@@ -49,8 +49,8 @@ class SentenceT5:
             all_embeddings.extend(sentence_embeddings)
 
         result = torch.stack(all_embeddings)
-        if convert_to_numpy:
-            result = result.to('cpu').detach().numpy().copy()
+        # if convert_to_numpy:
+        #     result = result.to('cpu').detach().numpy().copy()
         return result
     
 
