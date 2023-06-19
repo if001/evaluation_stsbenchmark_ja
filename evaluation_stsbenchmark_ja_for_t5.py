@@ -35,7 +35,7 @@ class SentenceLukeJapanese:
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-
+    @torch.no_grad()
     def encode(self, sentences, batch_size=8, show_progress_bar=False, convert_to_numpy=True):
         all_embeddings = []
         iterator = range(0, len(sentences), batch_size)
@@ -69,7 +69,7 @@ class SentenceT5:
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-
+    @torch.no_grad()
     def encode(self, sentences, batch_size=8, show_progress_bar=False, convert_to_numpy=True):
         all_embeddings = []
         batch_size = 1
@@ -107,7 +107,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 
 model_name = "sonoisa/sentence-luke-japanese-base-lite"
-model = SentenceLukeJapanese(model_name, 'cpu')
+model = SentenceLukeJapanese(model_name, 'cuda')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
