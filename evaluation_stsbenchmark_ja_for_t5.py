@@ -54,7 +54,9 @@ class SentenceLukeJapanese:
 class SentenceT5:
     def __init__(self, model_name_or_path, device=None):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
-        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
+        # self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
+        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, load_in_4bit=True, device_map="auto").encoder
+        
         #self.model.eval()
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -98,7 +100,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 # model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
 model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, device='cpu')
+t5_model = SentenceT5(model_name, device='cuda')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
