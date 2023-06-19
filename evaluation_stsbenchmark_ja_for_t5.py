@@ -57,11 +57,11 @@ class SentenceT5:
         # self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
         self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, load_in_4bit=True, device_map="auto").encoder
         
-        #self.model.eval()
+        self.model.eval()
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self.device = torch.device(device)
-        # self.model.to(device)
+        self.model.to(device)
 
     def _mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[0] #First element of model_output contains all token embeddings
