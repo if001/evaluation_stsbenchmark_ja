@@ -52,7 +52,7 @@ results = []
 
 for model_name in models:
     print(model_name)
-    model = SentenceTransformer(model_name, device="cpu")
+    model = SentenceTransformer(model_name, device="auto")
     evaluator = EmbeddingSimilarityEvaluator(sentences1, sentences2, scores, main_similarity=SimilarityFunction.COSINE, name='sts-test')
     spearman_cos = model.evaluate(evaluator)
     results.append('| {:s} | {:.1f} |'.format(model_name, spearman_cos * 100))
