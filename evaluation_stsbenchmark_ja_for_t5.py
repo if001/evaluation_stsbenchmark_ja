@@ -107,7 +107,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 
 model_name = "sonoisa/sentence-luke-japanese-base-lite"
-model = SentenceLukeJapanese(model_name)
+model = SentenceLukeJapanese(model_name, 'cpu')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
