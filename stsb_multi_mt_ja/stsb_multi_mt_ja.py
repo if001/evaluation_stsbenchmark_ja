@@ -142,13 +142,13 @@ class StsbMultiMt(datasets.GeneratorBasedBuilder):
         }
         downloaded_files = dl_manager.download(urls_to_download)
         return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                # These kwargs will be passed to _generate_examples
-                gen_kwargs={
-                    "filepath": downloaded_files["train"],
-                },
-            ),
+            # datasets.SplitGenerator(
+            #     name=datasets.Split.TRAIN,
+            #     # These kwargs will be passed to _generate_examples
+            #     gen_kwargs={
+            #         "filepath": downloaded_files["train"],
+            #     },
+            # ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 # These kwargs will be passed to _generate_examples
