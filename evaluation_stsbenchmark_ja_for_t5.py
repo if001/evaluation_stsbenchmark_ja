@@ -78,6 +78,7 @@ class SentenceT5:
 
             encoded_input = self.tokenizer.batch_encode_plus(batch, padding="max_length", max_length=128,
                                            truncation=True, return_tensors="pt").to(self.device)
+            print('encoded_input', encoded_input.shape)
             model_output = self.model(**encoded_input)
             sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
 
@@ -100,8 +101,12 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 #### /print debug information to stdout
 
 # model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
-model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, 'cpu')
+# model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
+# model = SentenceT5(model_name, 'cpu')
+
+
+model_name = "sonoisa/sentence-luke-japanese-base-lite"
+model = SentenceLukeJapanese(model_name)
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
@@ -118,10 +123,10 @@ print(model_name)
 # model = SentenceTransformer(modules=[t5_model], device="cuda")
 evaluator = EmbeddingSimilarityEvaluator(sentences1, sentences2, scores, main_similarity=SimilarityFunction.COSINE, name='sts-test')
 # spearman_cos = model.evaluate(evaluator)
-spearman_cos = evaluator(t5_model)
+spearman_cos = evaluator(model)
 results.append('| {:s} | {:.1f} |'.format(model_name, spearman_cos * 100))
 
 print('| model | spearman_cos |')
 print('|-------|-------------:|')
 for result in results:
-    print(result)
+    print(result)     
