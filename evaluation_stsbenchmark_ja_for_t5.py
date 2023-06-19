@@ -54,8 +54,8 @@ class SentenceLukeJapanese:
 class SentenceT5:
     def __init__(self, model_name_or_path, device=None):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
-        # self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
-        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, load_in_4bit=True, device_map="auto").encoder
+        self.model = T5Model.from_pretrained(model_name_or_path, device=device).encoder
+        # self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, load_in_4bit=True, device_map="auto").encoder
         
         self.model.eval()
         if device is None:
@@ -71,6 +71,7 @@ class SentenceT5:
 
     def encode(self, sentences, batch_size=8, show_progress_bar=False, convert_to_numpy=True):
         all_embeddings = []
+        batch_size = 1
         iterator = range(0, len(sentences), batch_size)
         for batch_idx in iterator:
             batch = sentences[batch_idx:batch_idx + batch_size]
@@ -100,7 +101,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 # model_name ='sonoisa/sentence-bert-base-ja-mean-tokens-v2'
 model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name, device='cuda')
+t5_model = SentenceT5(model_name, device='cpu')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
