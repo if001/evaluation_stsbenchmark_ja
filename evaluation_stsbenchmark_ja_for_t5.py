@@ -23,8 +23,8 @@ class SentenceT5:
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
         self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, device_map="auto").encoder
         #self.model.eval()
-        # if device is None:
-        #     device = "cuda" if torch.cuda.is_available() else "cpu"
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
         # self.device = torch.device(device)
         # self.model.to(device)
 
