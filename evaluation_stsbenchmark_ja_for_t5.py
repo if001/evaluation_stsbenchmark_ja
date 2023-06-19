@@ -21,13 +21,12 @@ import os
 class SentenceT5:
     def __init__(self, model_name_or_path, device=None):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
-        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
-        self.model.eval()
-
-        if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.device = torch.device(device)
-        self.model.to(device)
+        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16, device_map="auto").encoder
+        #self.model.eval()
+        # if device is None:
+        #     device = "cuda" if torch.cuda.is_available() else "cpu"
+        # self.device = torch.device(device)
+        # self.model.to(device)
 
     def _mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[0] #First element of model_output contains all token embeddings
