@@ -44,7 +44,7 @@ class SentenceLukeJapanese:
 
             encoded_input = self.tokenizer.batch_encode_plus(batch, padding="max_length", max_length=128,
                                            truncation=True, return_tensors="pt").to(self.device)
-            print('encoded_input', encoded_input.shape)
+            print('encoded_input', encoded_input)
             model_output = self.model(**encoded_input)
             sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
 
