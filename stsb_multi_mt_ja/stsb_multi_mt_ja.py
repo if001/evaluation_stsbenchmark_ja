@@ -136,7 +136,7 @@ class StsbMultiMt(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
         urls_to_download = {
-            "train": "{}/stsb-{}-train.csv".format(_BASE_URL, self.config.name),
+            # "train": "{}/stsb-{}-train.csv".format(_BASE_URL, self.config.name),
             "dev": "{}/stsb-{}-dev.csv".format(_BASE_URL, self.config.name),
             "test": "{}/stsb-{}-test.csv".format(_BASE_URL, self.config.name),
         }
