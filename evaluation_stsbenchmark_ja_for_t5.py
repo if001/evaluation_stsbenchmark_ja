@@ -21,7 +21,7 @@ import os
 class SentenceT5:
     def __init__(self, model_name_or_path, device=None):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name_or_path, is_fast=False)
-        self.model = T5Model.from_pretrained(model_name_or_path).encoder
+        self.model = T5Model.from_pretrained(model_name_or_path, torch_dtype=torch.float16).encoder
         self.model.eval()
 
         if device is None:
