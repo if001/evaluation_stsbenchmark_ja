@@ -88,7 +88,7 @@ models = [
 ]
 
 model_name = "sonoisa/sentence-t5-base-ja-mean-tokens"
-t5_model = SentenceT5(model_name)
+t5_model = SentenceT5(model_name, device='cpu')
 
 ds = load_dataset('stsb_multi_mt_ja', 'ja', split='test')
 
